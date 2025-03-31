@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {useEffect, useState} from "react";
+import {Todo} from "./interfaces/Todo.tsx";
+import TodoList from "./components/TodoList.tsx";
+import TodoForm from "./components/TodoForm.tsx";
 
 function App() {
-  const [count, setCount] = useState(0)
+    // Hàm lấy dữ liệu từ localStorage ngay từ khi khởi tạo state
+    const getInitialTodos = (): Todo[] => {
+        const savedTodos = localStorage.getItem("todos");
+        return savedTodos ? JSON.parse(savedTodos) : [];
+    };
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const [todos, setTodos] = useState<Todo[]>(getInitialTodos);
+
+    // Lưu dữ liệu vào localStorage mỗi khi danh sách thay đổi
+    useEffect(() => {
+        localStorage.setItem("todos", JSON.stringify(todos));
+    }, [todos]);
+
+    // Thêm công việc mới
+    const addTodo = (todo: Todo) => {
+        setTodos([...todos, todo]);
+    };
+
+    // Xóa công việc
+    const deleteTodo = (id: string) => {
+        setTodos(todos.filter(todo => todo.id !== id));
+    }
+
+    // Chuyển trạng thái hoàn thành
+    const toggleComplete = (id: string) => {
+        const todosNew: Todo[] = todos.map(todo => todo.id === id ? {...todo, completed: !todo.completed} : todo);
+        setTodos(todosNew);
+    }
+
+    return (
+        <div className="app">
+            <h1>📝 To-Do List</h1>
+            <TodoForm addTodo={addTodo}/>
+            <TodoList todos={todos} deleteTodo={deleteTodo} toggleComplete={toggleComplete}/>
+        </div>
+    );
 }
 
-export default App
+export default App;
