@@ -5,7 +5,6 @@ import {v4 as uuidv4} from "uuid";
 
 const TodoForm: React.FC<TodoFormProps> = ({addTodo}) => {
     const [text, setText] = useState<string>("");
-    const placeholder: string = "Thêm công việc mới...";
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -20,7 +19,7 @@ const TodoForm: React.FC<TodoFormProps> = ({addTodo}) => {
         <form onSubmit={handleSubmit} className="todo-form">
             <input
                 type="text"
-                placeholder={placeholder}
+                placeholder="Thêm công việc mới..."
                 value={text}
                 onChange={(e) => setText(e.target.value)}
             />
